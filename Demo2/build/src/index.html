@@ -1,34 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
-  
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    />
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-  <script>
-   
-class Services {
-   searchMusic(term){
-    return  fetch(`https://itunes.apple.com/search?term=${term}`,{
-    method: 'POST', // *GET, POST, PUT, DELETE, etc.
-    mode: 'cors', // no-cors, *cors, same-origin
-    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-    credentials: 'same-origin', // include, *same-origin, omit
-    headers: {
-      'Content-Type': 'application/json'
-      // 'Content-Type': 'application/x-www-form-urlencoded',
-    }});
-  }
-}
+    <title>Document</title>
+    <style>
+      .input-group-append {
+        cursor: pointer;
+      }
+      .input-group-text:hover {
+        background-color: #111;
+        color: #fff;
+      }
+    </style>
+  </head>
 
-var svc  = new Services();
-svc.searchMusic('John').then(response=>response.json()
-          .then(d=>console.log(d)), error=> console.error(error));
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <div class="input-group md-form form-sm  pl-0">
+            <input
+              class="form-control my-0 py-1 red-border"
+              type="text"
+              placeholder="Search"
+              aria-label="Search"
+              id="searchQuery"
+            />
+            <div class="input-group-append">
+              <span class="input-group-text red lighten-3" id="basic-text1"
+                ><i class="fas fa-search text-grey" aria-hidden="true"></i
+              ></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row" id="images"></div>
+    </div>
 
+    <script>
+      class Services {
+        searchMusic(term) {
+          return fetch(`https://itunes.apple.com/search?term=${term}`, {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+              'Content-Type': 'application/json',
+              // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+          });
+        }
+      }
+      function search(term) {
+        var svc = new Services();
+        svc.searchMusic(term).then(
+          response =>
+            response.json().then(d => {
+              console.log(d);
+              var coll = d.results;
+              console.log(coll);
+              var html = '';
+              coll.forEach(music => {
+                html += `<div class="col-sm-2" ><img class="img-thumbnail" style="width:100%" src='${music.artworkUrl100}' ></div>`;
+              });
+              document.getElementById('images').innerHTML = html;
+            }),
+          error => console.error(error)
+        );
+      }
+      $(document).ready(function(){
+        search('*');
+        $('#basic-text1').click(function(){
+          search($('#searchQuery').val());
+        });
 
-  </script>
-</body>
+      });
+      
+    </script>
+  </body>
 </html>
